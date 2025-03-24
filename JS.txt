@@ -1,0 +1,99 @@
+// Array para armazenar os cadastros
+let cadastros = [];
+
+// Função para exibir a lista de pessoas cadastradas
+function displayPeopleList() {
+    const listElement = document.getElementById("searchResults");
+    listElement.innerHTML = ""; // Limpa a lista antes de atualizar
+
+    cadastros.forEach(cadastro => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <span>Dono:</span> ${cadastro.dono.nome} <br>
+            <span>Telefone:</span> ${cadastro.dono.telefone} <br>
+            <span>Email:</span> ${cadastro.dono.email} <br>
+            <span>Endereço:</span> ${cadastro.dono.endereco} <br>
+            <span>Animal:</span> ${cadastro.animal.nome} <br>
+            <span>Raça:</span> ${cadastro.animal.raca} <br>
+            <span>Espécie:</span> ${cadastro.animal.especie} <br>
+            <span>Pelagem:</span> ${cadastro.animal.pelagem} <br>
+            <span>Sexo:</span> ${cadastro.animal.sexo} <br>
+            <span>Idade do Animal:</span> ${cadastro.animal.idade} anos
+        `;
+        listElement.appendChild(li);
+    });
+}
+
+// Função para adicionar um cadastro de dono e cachorro
+document.getElementById('cadastroForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const dono = {
+        nome: document.getElementById('nomeDono').value,
+        telefone: document.getElementById('telefoneDono').value,
+        email: document.getElementById('emailDono').value,
+        endereco: document.getElementById('enderecoDono').value,
+    };
+
+    const cachorro = {
+        nome: document.getElementById('nomeCachorro').value,
+        especie: document.getElementById('especieCachorro').value,
+        raca: document.getElementById('racaCachorro').value,
+        pelagem: document.getElementById('pelagemCachorro').value,
+        sexo: document.getElementById('sexoCachorro').value,
+        idade: document.getElementById('idadeCachorro').value,
+    };
+
+    // Adiciona o cadastro ao array
+    cadastros.push({ dono, animal: cachorro });
+
+    // Limpa os campos do formulário
+    document.getElementById('nomeDono').value = "";
+    document.getElementById('telefoneDono').value = "";
+    document.getElementById('emailDono').value = "";
+    document.getElementById('enderecoDono').value = "";
+    document.getElementById('nomeCachorro').value = "";
+    document.getElementById('especieCachorro').value = "";
+    document.getElementById('racaCachorro').value = "";
+    document.getElementById('pelagemCachorro').value = "";
+    document.getElementById('sexoCachorro').value = "";
+    document.getElementById('idadeCachorro').value = "";
+
+    // Atualiza a lista de cadastros
+    displayPeopleList();
+});
+
+// Função para pesquisar pessoas pela inicial do nome do dono
+function searchByInitial() {
+    const searchInitial = document.getElementById('initialSearch').value.toLowerCase();
+    if (searchInitial.length > 0) {
+        // Armazena os resultados de pesquisa na URL
+        window.location.href = 'resultados.html?search=' + searchInitial;
+    }
+}
+
+// Função para exibir os resultados da pesquisa em uma nova página
+function showSearchResults() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchInitial = urlParams.get('search') || '';
+
+    const filteredCadastros = cadastros.filter(cadastro => cadastro.dono.nome.toLowerCase().startsWith(searchInitial));
+
+    const resultSection = document.getElementById("resultSection");
+    const listElement = document.getElementById("searchResults");
+
+    listElement.innerHTML = ""; // Limpa a lista de resultados
+
+    filteredCadastros.forEach(cadastro => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <span>Dono:</span> ${cadastro.dono.nome} <br>
+            <span>Cachorro:</span> ${cadastro.animal.nome} <br>
+            <span>Raça:</span> ${cadastro.animal.raca} <br>
+            <span>Espécie:</span> ${cadastro.animal.especie} <br>
+            <span>Sexo:</span> ${cadastro.animal.sexo} <br>
+            <span>Idade do Cachorro:</span> ${cadastro.animal.idade} anos
+        `;
+        listElement.appendChild(li);
+    });
+}

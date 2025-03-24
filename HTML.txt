@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Veterinário</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cadastro de Veterinário</h1>
+
+        <!-- Seção de Pesquisa -->
+        <div class="search-section">
+            <label for="initialSearch">Pesquisar pelo nome do Proprietário (inicial):</label>
+            <input type="text" id="initialSearch" placeholder="Digite a inicial" oninput="searchByInitial()">
+        </div>
+
+        <!-- Seção de Cadastro -->
+        <div class="register-section">
+            <h2>Cadastro do Proprietário e Animal</h2>
+            <form id="cadastroForm">
+                <h3>Dados do Proprietário</h3>
+                <label for="nomeProprietario">Nome do Proprietário:</label>
+                <input type="text" id="nomeProprietario" placeholder="Digite o nome do proprietário" required>
+
+                <label for="telefoneProprietario">Telefone do Proprietário:</label>
+                <input type="text" id="telefoneProprietario" placeholder="Digite o telefone" required>
+
+                <label for="emailProprietario">Email do Proprietário:</label>
+                <input type="email" id="emailProprietario" placeholder="Digite o email" required>
+
+                <label for="enderecoProprietario">Endereço do Proprietário:</label>
+                <input type="text" id="enderecoProprietario" placeholder="Digite o endereço" required>
+
+                <h3>Dados do Animal</h3>
+                <label for="nomeAnimal">Nome do Animal:</label>
+                <input type="text" id="nomeAnimal" placeholder="Digite o nome do animal" required>
+
+                <label for="especieAnimal">Espécie do Animal:</label>
+                <input type="text" id="especieAnimal" placeholder="Digite a espécie do animal" required>
+
+                <label for="racaAnimal">Raça do Animal:</label>
+                <input type="text" id="racaAnimal" placeholder="Digite a raça do animal" required>
+
+                <label for="pelagemAnimal">Pelagem do Animal:</label>
+                <input type="text" id="pelagemAnimal" placeholder="Digite a pelagem do animal" required>
+
+                <label for="sexoAnimal">Sexo do Animal:</label>
+                <select id="sexoAnimal" required>
+                    <option value="">Selecione o sexo</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Fêmea">Fêmea</option>
+                </select>
+
+                <label for="idadeAnimal">Idade do Animal:</label>
+                <input type="number" id="idadeAnimal" placeholder="Digite a idade do animal" required>
+
+                <button type="submit">Cadastrar</button>
+            </form>
+        </div>
+
+        <!-- Seção de Resultados -->
+        <div id="resultSection" style="display:none;">
+            <h2>Proprietários e Animais Cadastrados</h2>
+            <ul id="pessoasList">
+                <!-- Lista de proprietários e animais cadastrados -->
+            </ul>
+            <a href="#" onclick="showCadastroForm()">Voltar para o Cadastro</a>
+        </div>
+    </div>
+
+    <script>
+        // Array para armazenar os cadastros
+        let cadastros = [];
+
+        // Função para exibir a lista de proprietários e animais cadastrados
+        function displayPeopleList() {
+            const listElement = document.getElementById("pessoasList");
+            listElement.innerHTML = ""; // Limpa a lista antes de atualizar
+
+            cadastros.forEach(cadastro => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span>Proprietário:</span> ${cadastro.proprietario.nome} <br>
+                    <span>Telefone:</span> ${cadastro.proprietario.telefone} <br>
+                    <span>Email:</span> ${cadastro.proprietario.email} <br>
+                    <span>Endereço:</span> ${cadastro.proprietario.endereco} <br>
+                    <span>Animal:</span> ${cadastro.animal.nome} <br>
+                    <span>Raça:</span> ${cadastro.animal.raca} <br>
+                    <span>Espécie:</span> ${cadastro.animal.especie} <br>
+                    <span>Pelagem:</span> ${cadastro.animal.pelagem} <br>
+                    <span>Sexo:</span> ${cadastro.animal.sexo} <br>
+                    <span>Idade do Animal:</span> ${cadastro.animal.idade} anos
+                `;
+                listElement.appendChild(li);
+            });
+        }
+
+        // Função para adicionar um cadastro de proprietário e animal
+        document.getElementById('cadastroForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const proprietario = {
+                nome: document.getElementById('nomeProprietario').value,
+                telefone: document.getElementById('telefoneProprietario').value,
+                email: document.getElementById('emailProprietario').value,
+                endereco: document.getElementById('enderecoProprietario').value,
+            };
+
+            const animal = {
+                nome: document.getElementById('nomeAnimal').value,
+                especie: document.getElementById('especieAnimal').value,
+                raca: document.getElementById('racaAnimal').value,
+                pelagem: document.getElementById('pelagemAnimal').value,
+                sexo: document.getElementById('sexoAnimal').value,
+                idade: document.getElementById('idadeAnimal').value,
+            };
+
+            // Adiciona o cadastro ao array
+            cadastros.push({ proprietario, animal });
+
+            // Limpa os campos do formulário
+            document.getElementById('nomeProprietario').value = "";
+            document.getElementById('telefoneProprietario').value = "";
+            document.getElementById('emailProprietario').value = "";
+            document.getElementById('enderecoProprietario').value = "";
+            document.getElementById('nomeAnimal').value = "";
+            document.getElementById('especieAnimal').value = "";
+            document.getElementById('racaAnimal').value = "";
+            document.getElementById('pelagemAnimal').value = "";
+            document.getElementById('sexoAnimal').value = "";
+            document.getElementById('idadeAnimal').value = "";
+
+            // Atualiza a lista de cadastros
+            displayPeopleList();
+        });
+
+        // Função para pesquisar pessoas pela inicial do nome do proprietário
+        function searchByInitial() {
+            const searchInitial = document.getElementById('initialSearch').value.toLowerCase();
+            const filteredCadastros = cadastros.filter(cadastro => cadastro.proprietario.nome.toLowerCase().startsWith(searchInitial));
+
+            // Exibe os resultados
+            displaySearchResults(filteredCadastros);
+        }
+
+        // Função para exibir os resultados da pesquisa
+        function displaySearchResults(filteredCadastros) {
+            const resultSection = document.getElementById("resultSection");
+            const listElement = document.getElementById("pessoasList");
+
+            listElement.innerHTML = "";
+
+            filteredCadastros.forEach(cadastro => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span>Proprietário:</span> ${cadastro.proprietario.nome} <br>
+                    <span>Animal:</span> ${cadastro.animal.nome} <br>
+                    <span>Raça:</span> ${cadastro.animal.raca} <br>
+                    <span>Espécie:</span> ${cadastro.animal.especie} <br>
+                    <span>Sexo:</span> ${cadastro.animal.sexo} <br>
+                    <span>Idade do Animal:</span> ${cadastro.animal.idade} anos
+                `;
+                listElement.appendChild(li);
+            });
+
+            // Mostra a seção de resultados e esconde o formulário
+            resultSection.style.display = "block";
+            document.querySelector('.register-section').style.display = "none";
+        }
+
+        // Função para mostrar novamente o formulário de cadastro
+        function showCadastroForm() {
+            document.getElementById("resultSection").style.display = "none";
+            document.querySelector('.register-section').style.display = "block";
+        }
+    </script>
+</body>
+</html>
